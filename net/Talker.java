@@ -1,4 +1,7 @@
+package net;
 
+
+import data.ChatMessage;
 import java.util.Scanner;
 import net.StreamHandler;
 
