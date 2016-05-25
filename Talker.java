@@ -48,7 +48,7 @@ public class Talker implements Runnable {
         
         Scanner scanner = new Scanner(System.in);
         String message;
-        while(!((message = scanner.nextLine()).equals(""))) {
+        while(!((message = scanner.nextLine()).equals("stop"))) {
             
             this.chatMessage.setMessage(message);
             this.chatMessage.setDate();
@@ -58,10 +58,9 @@ public class Talker implements Runnable {
     
     private void reader() {
         
-        while(true) {
+        ChatMessage incomingMessage;
+        while(!((incomingMessage = (ChatMessage)streamHandler.pullFromStream()).getMessage().equals("stop"))) {
             
-            ChatMessage incomingMessage;
-            incomingMessage = (ChatMessage)streamHandler.pullFromStream();
             System.out.println(incomingMessage.getDate() + " - [" + incomingMessage.getUsername() + "] " + incomingMessage.getMessage());
         }
     }
