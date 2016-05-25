@@ -13,8 +13,9 @@ import java.util.logging.Logger;
  */
 public class ChatMessage implements Serializable {
     
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
     private final String username;
+    private String chatName;
     private LocalDateTime dateTime;
     private String message;
 
@@ -27,12 +28,20 @@ public class ChatMessage implements Serializable {
         return username;
     }
 
-    public void setDate() {
+    public String getChatName() {
+        return chatName;
+    }
+
+    public void setChatName(String chatName) {
+        this.chatName = chatName;
+    }
+
+    public void setDateTime() {
         
         this.dateTime = LocalDateTime.now();
     }
 
-    public String getDate() {
+    public String getDateTime() {
         
         try {
             return CalendarUtils.dateToString(this.dateTime, Consts.dateFormat);

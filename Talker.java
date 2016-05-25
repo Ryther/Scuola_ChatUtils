@@ -51,7 +51,7 @@ public class Talker implements Runnable {
         while(!((message = scanner.nextLine()).equals("stop"))) {
             
             this.chatMessage.setMessage(message);
-            this.chatMessage.setDate();
+            this.chatMessage.setDateTime();
             streamHandler.pushToStream(this.chatMessage);
         }
     }
@@ -61,7 +61,7 @@ public class Talker implements Runnable {
         ChatMessage incomingMessage;
         while(!((incomingMessage = (ChatMessage)streamHandler.pullFromStream()).getMessage().equals("stop"))) {
             
-            System.out.println(incomingMessage.getDate() + " - [" + incomingMessage.getUsername() + "] " + incomingMessage.getMessage());
+            System.out.println(incomingMessage.getDateTime() + " - [" + incomingMessage.getUsername() + "] " + incomingMessage.getMessage());
         }
     }
 }
