@@ -13,8 +13,8 @@ import java.util.logging.Logger;
  */
 public class ChatMessage implements Serializable {
     
-	private static final long serialVersionUID = 1L;
-	private String username;
+    private static final long serialVersionUID = 1L;
+    private final String username;
     private LocalDateTime dateTime;
     private String message;
 
