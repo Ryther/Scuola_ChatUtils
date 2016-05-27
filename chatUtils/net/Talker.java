@@ -4,7 +4,6 @@ package chatUtils.net;
 import chatUtils.data.ChatMessage;
 import java.util.Scanner;
 import utils.net.StreamHandler;
-import utils.net.StreamHandler;
 
 /**
  * Talker: classe di appoggio per l'esecuzione in loop (polling) di metodi di 
