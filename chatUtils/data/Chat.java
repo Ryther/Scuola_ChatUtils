@@ -24,29 +24,53 @@ public class Chat implements Comparable{
      * 
      * @param chatName <tt>String</tt> che identifica il nome della chat.
      */
-    
     public Chat(String chatName) {
         
         this.chatName = chatName;
         this.users = new TreeSet();
         this.log = new LinkedList();
     }
-
+    
+    /**
+     * Chat.getChatName: metodo pubblico per avere il nome della chat.
+     * 
+     * @return <tt>String</tt> che identifica il nome della chat.
+     */
     public String getChatName() {
         
         return chatName;
     }
-
+    
+    /**
+     * Chat.getUsers: metodo pubblico per avere la lista di utenti.
+     * 
+     * @return <tt>Set</tt> che contiene i nomi degli utenti della chat.
+     */
     public Set<UserData> getUsers() {
         
         return users;
     }
-
+    
+    /**
+     * Chat.getLog: metodo pubblico per avere la <tt>List</tt> di messaggi della
+     * chat.
+     * 
+     * @return <tt>List</tt> di tutti i messaggi sulla chat.
+     */
     public List<String> getLog() {
         
         return log;
     }
     
+    /**
+     * Chat.getLog: metodo pubblico per avere la <tt>List</tt> di ultimi messaggi
+     * della chat.
+     * 
+     * <tt></tt>
+     * 
+     * @param size dell'attuale log presente sul Client.
+     * @return <tt>List</tt> di tutti i messaggi sulla chat.
+     */
     public List<String> getLog(int size) {
         
         return this.log.subList(
@@ -54,11 +78,25 @@ public class Chat implements Comparable{
                 this.log.size());
     }
     
-    public boolean addUser(UserData userdata) {
+    /**
+     * Chat.addUser: metodo pubblico per aggoingere un utente alla chat.
+     * 
+     * <tt></tt>
+     * @param userData Oggetto con tutti i dati dell'utente.
+     * @return <tt>boolean</tt> <i>true</i> se l'inserimento è riuscito 
+     * <i>false</i> se l'inserimento è fallito
+     */
+    public boolean addUser(UserData userData) {
         
-        return this.users.add(userdata);
+        return this.users.add(userData);
     }
     
+    /**
+     * Chat.removeUser
+     * 
+     * @param userName
+     * @return 
+     */
     public boolean removeUser(String userName) {
         
         return this.users.remove(userName);
