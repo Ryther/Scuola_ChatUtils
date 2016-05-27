@@ -7,7 +7,7 @@ import utils.net.StreamHandler;
 
 /**
  * Talker: classe di appoggio per l'esecuzione in loop (polling) di metodi di 
- * invio e riccezione.
+ * invio e ricezione.
  * 
  * @author Edoardo Zanoni
  * @author Riccardo Bertarelli
