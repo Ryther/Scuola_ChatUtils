@@ -1,5 +1,6 @@
 package chatUtils.data;
 
+import java.io.Serializable;
 import java.util.Set;
 import java.util.TreeSet;
 import utils.net.StreamHandler;
@@ -8,8 +9,9 @@ import utils.net.StreamHandler;
  *
  * @author Edoardo Zanoni
  */
-public class UserData implements Comparable {
+public class UserData implements Serializable, Comparable {
     
+    private static final long serialVersionUID = 1L;
     private final String userName;
     private final Set<Chat> chats;
     private StreamHandler streamHandler;
