@@ -1,8 +1,5 @@
 package chatUtils.data;
 
-
-
-import utils.data.CalendarUtils;
 import utils.data.CalendarUtils;
 import java.io.Serializable;
 import java.text.ParseException;
