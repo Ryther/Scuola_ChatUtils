@@ -2,8 +2,7 @@ package chatUtils.data;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Chat: classe per la gestione di una singola chat, instesa coma stanza dove 
@@ -14,7 +13,7 @@ import java.util.TreeSet;
 public class Chat implements Comparable{
     
     private final String chatName; // Nome della chat
-    private final Set<UserData> users; // Client attualmente connessi
+    private final ConcurrentHashMap<Integer, UserData> users; // Client attualmente connessi
     private final List<String> log; // Lo storico della chat
     
     /**
@@ -27,7 +26,7 @@ public class Chat implements Comparable{
     public Chat(String chatName) {
         
         this.chatName = chatName;
-        this.users = new TreeSet();
+        this.users = new ConcurrentHashMap();
         this.log = new LinkedList();
     }
     
@@ -46,7 +45,7 @@ public class Chat implements Comparable{
      * 
      * @return <tt>Set</tt> che contiene i nomi degli utenti della chat.
      */
-    public Set<UserData> getUsers() {
+    public ConcurrentHashMap<Integer, UserData> getUsers() {
         
         return users;
     }
@@ -86,9 +85,9 @@ public class Chat implements Comparable{
      * @return <tt>boolean</tt> <i>true</i> se l'inserimento è riuscito 
      * <i>false</i> se l'inserimento è fallito
      */
-    public boolean addUser(UserData userData) {
+    public void addUser(UserData userData) {
         
-        return this.users.add(userData);
+        this.users.put(userData.hashCode(), userData);
     }
     
     /**
@@ -97,9 +96,9 @@ public class Chat implements Comparable{
      * @param userName
      * @return 
      */
-    public boolean removeUser(String userName) {
+    public void removeUser(String userName) {
         
-        return this.users.remove(userName);
+        this.users.remove(userName.hashCode());
     }
 
     @Override
