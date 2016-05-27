@@ -1,20 +1,29 @@
 package chatUtils.data;
 
-import chatUtils.data.UserData;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 /**
- *
+ * Chat: classe per la gestione di una singola chat, instesa coma stanza dove 
+ * scrivono tutti i client connessi alla stessa.
+ * 
  * @author Edoardo Zanoni
  */
 public class Chat implements Comparable{
     
-    private final String chatName;
-    private final Set<UserData> users;
-    private final List<String> log;
+    private final String chatName; // Nome della chat
+    private final Set<UserData> users; // Client attualmente connessi
+    private final List<String> log; // Lo storico della chat
+    
+    /**
+     * Costruttore: ricevendo il nome della chat crea un nuovo <tt>TreeSet</tt> 
+     * per contenere gli utenti che saranno presenti nella chat e una nuova 
+     * <tt>LinkedList</tt> per contenere tutti i messaggi della chat.
+     * 
+     * @param chatName <tt>String</tt> che identifica il nome della chat.
+     */
     
     public Chat(String chatName) {
         
