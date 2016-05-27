@@ -1,8 +1,7 @@
 package chatUtils.data;
 
 import java.io.Serializable;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import utils.net.StreamHandler;
 
 /**
@@ -13,13 +12,13 @@ public class UserData implements Serializable, Comparable {
     
     private static final long serialVersionUID = 1L;
     private final String userName;
-    private final Set<Chat> chats;
+    private final ConcurrentHashMap<Integer, Chat> chats;
     private StreamHandler streamHandler;
 
     public UserData(String userName) {
         
         this.userName = userName;
-        this.chats = new TreeSet();
+        this.chats = new ConcurrentHashMap();
     }
 
     public StreamHandler getStreamHandler() {
@@ -37,14 +36,14 @@ public class UserData implements Serializable, Comparable {
         return userName;
     }
 
-    public Set<Chat> getChats() {
+    public ConcurrentHashMap<Integer, Chat> getChats() {
         
         return chats;
     }
     
-    public boolean addChat(Chat chat) {
+    public void addChat(Chat chat) {
         
-        return this.chats.add(chat);
+        this.chats.put(chat.hashCode(), chat);
     }
 
     @Override
