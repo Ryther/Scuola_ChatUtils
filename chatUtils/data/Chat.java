@@ -43,7 +43,8 @@ public class Chat implements Comparable{
     /**
      * Chat.getUsers: metodo pubblico per avere la lista di utenti.
      * 
-     * @return <tt>Set</tt> che contiene i nomi degli utenti della chat.
+     * @return <tt>ConcurrentHashMap</tt> che contiene i nomi degli utenti della
+     * chat.
      */
     public ConcurrentHashMap<Integer, UserData> getUsers() {
         
@@ -65,8 +66,6 @@ public class Chat implements Comparable{
      * Chat.getLog: metodo pubblico per avere la <tt>List</tt> di ultimi messaggi
      * della chat.
      * 
-     * <tt></tt>
-     * 
      * @param size dell'attuale log presente sul Client.
      * @return <tt>List</tt> di tutti i messaggi sulla chat.
      */
@@ -78,12 +77,9 @@ public class Chat implements Comparable{
     }
     
     /**
-     * Chat.addUser: metodo pubblico per aggoingere un utente alla chat.
+     * Chat.addUser: metodo pubblico per aggiungere un utente alla chat.
      * 
-     * <tt></tt>
      * @param userData Oggetto con tutti i dati dell'utente.
-     * @return <tt>boolean</tt> <i>true</i> se l'inserimento è riuscito 
-     * <i>false</i> se l'inserimento è fallito
      */
     public void addUser(UserData userData) {
         
@@ -91,10 +87,9 @@ public class Chat implements Comparable{
     }
     
     /**
-     * Chat.removeUser
+     * Chat.removeUser: metodo pubblico per rimuovere un utente alla chat.
      * 
-     * @param userName
-     * @return 
+     * @param userName Stringa contenente il nome del'urente da rimuovere.
      */
     public void removeUser(String userName) {
         
