@@ -1,5 +1,6 @@
 package chatUtils.data;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,8 +11,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * 
  * @author Edoardo Zanoni
  */
-public class Chat implements Comparable{
+public class Chat implements Serializable, Comparable{
     
+    private static final long serialVersionUID = 1L;
     private final String chatName; // Nome della chat
     private final ConcurrentHashMap<Integer, UserData> users; // Client attualmente connessi
     private final List<String> log; // Lo storico della chat
