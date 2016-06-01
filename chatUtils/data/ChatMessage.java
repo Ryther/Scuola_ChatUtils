@@ -40,6 +40,15 @@ public class ChatMessage implements Serializable {
         
         this.dateTime = LocalDateTime.now();
     }
+    
+    public void setDateTime(String dateTime) {
+        
+        try {
+            this.dateTime = CalendarUtils.stringToDate(dateTime, Consts.dateFormat);
+        } catch (ParseException ex) {
+            Logger.getLogger(ChatMessage.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     public String getDateTime() {
         
@@ -59,5 +68,11 @@ public class ChatMessage implements Serializable {
     public void setMessage(String message) {
         
         this.message = message;
+    }
+    
+    @Override
+    public String toString() {
+        
+        return this.getDateTime() + " [" + this.getUsername()+ "] " + this.getMessage();
     }
 }
