@@ -73,6 +73,12 @@ public class ChatMessage implements Serializable {
     @Override
     public String toString() {
         
-        return this.getDateTime() + " [" + this.getUsername()+ "] " + this.getMessage();
+        StringBuilder result = new StringBuilder();
+        result.append(this.getDateTime())
+                .append(" [")
+                .append(this.getUsername())
+                .append("] ")
+                .append(this.getMessage());
+        return result.toString();
     }
 }
