@@ -2,8 +2,10 @@ package chatUtils.net;
 
 
 import chatUtils.data.ChatMessage;
+import java.nio.channels.SocketChannel;
+import java.util.Map;
 import java.util.Scanner;
-import utils.net.StreamHandler;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Talker: classe di appoggio per l'esecuzione in loop (polling) di metodi di 
@@ -22,34 +24,26 @@ public class Talker implements Runnable {
         READER, WRITER
     }
     
-    private final StreamHandler streamHandler; // Handler per la gestione degli stream.
+    private final SocketChannel socketChannel; // Handler per la gestione degli stream.
     private final TalkerType talkerType; // Enumeratorre di ripo.
-    private ChatMessage chatMessage; // Classe di gestione dei messaggi.
+    private final Map<TalkerType, Object> dataMap; // Mappa per la  gestione degli oggetti da inviare.
     
     /**
-    * Costruttore: inizializza Talker come TalkerType.WRITER, usando lo stream
-    * per inviare un oggetto chatMessage.
+    * Costruttore: inizializza Talker, usando un channel per inviare
+    * e ricevere oggetti.
     * 
-    * @param streamHandler Lo StreamHandler da utilizzare per inviare.
-    * @param chatMessage L'oggetto ChatMessage da gestire.
+    * @param dataMap Una <tt>ConcurentHashMap<TalkerType, Object></tt> 
+    * contenente due valori, entrambi con chiave di tipo <tt>TalkerType</tt>
+    * e valori di tipo <tt>Object</tt>.
+    * @param socketChannel Il SocketChannel di connessione al server.
+    * @param talkerType La tipologia di <tt>Runnable</tt> che si vuole creare,
+    * con stati selezionabili tra: {@link TalkerType}.
     */
-    public Talker(StreamHandler streamHandler, ChatMessage chatMessage) {
+    public Talker(Map<TalkerType, Object> dataMap,SocketChannel socketChannel, TalkerType talkerType) {
         
-        this.streamHandler = streamHandler;
-        this.chatMessage = chatMessage;
-        this.talkerType = TalkerType.WRITER;
-    }
-    
-    /**
-    * Costruttore: inizializza Talker come TalkerType.READER, usando lo stream
-    * per ricevere un oggetto di tipo ChatMessage.
-    * 
-    * @param streamHandler Lo StreamHandler da utilizzare per ricevere.
-    */
-    public Talker(StreamHandler streamHandler) {
-        
-        this.streamHandler = streamHandler;
-        this.talkerType = TalkerType.READER;
+        this.dataMap = new ConcurrentHashMap();
+        this.socketChannel = socketChannel;
+        this.talkerType = talkerType;
     }
     
     /**
@@ -71,8 +65,9 @@ public class Talker implements Runnable {
     
     /**
      * Talker.writer: metodo privato utilizzato per l'avvio del polling in
-     * scrittura, utilizzando lo StreamHandler ed il ChatMessage specificati
-     * nel costruttore per inviare messaggi sullo stream.
+     * scrittura, utilizzando il <tt>SocketChannel</tt> ed inviando 
+     * l'<tt>Object</tt> impostato come valore della dataMap 
+     * all chiave <tt>TalkerType.WRITER</tt>.
      */
     private void writer(){
         
@@ -82,19 +77,20 @@ public class Talker implements Runnable {
             
             this.chatMessage.setMessage(message);
             this.chatMessage.setDateTime();
-            streamHandler.pushToStream(this.chatMessage);
+            socketChannel.pushToStream(this.chatMessage);
         }
     }
     
     /**
      * Talker.reader: metodo privato utilizzato per l'avvio del polling in
-     * lettura, utilizzando lo StreamHandler specificato nel costruttore per 
-     * ricevere un oggetto ChatMessage e mostrarlo sulla console.
+     * lettura, utilizzando il <tt>SocketChannel</tt> specificato nel
+     * costruttore per ricevere un oggetto e salvarlo nella <tt>dataMap</tt>
+     * alla chiave <tt>TalkerType.READER</tt>.
      */
     private void reader() {
         
         ChatMessage incomingMessage;
-        while(!((incomingMessage = (ChatMessage)streamHandler.pullFromStream()).getMessage().equals("stop"))) {
+        while(!((incomingMessage = (ChatMessage)socketChannel.pullFromStream()).getMessage().equals("stop"))) {
             
             System.out.println(incomingMessage.getDateTime() + " - [" + incomingMessage.getUsername() + "] " + incomingMessage.getMessage());
         }
