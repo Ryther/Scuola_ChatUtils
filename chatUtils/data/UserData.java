@@ -1,9 +1,8 @@
 package chatUtils.data;
 
 import java.io.Serializable;
-import java.nio.channels.SocketChannel;
+import java.nio.channels.SelectionKey;
 import java.util.concurrent.ConcurrentHashMap;
-import utils.net.SocketChannelHandler;
 
 /**
  *
@@ -14,7 +13,7 @@ public class UserData implements Serializable, Comparable {
     private static final long serialVersionUID = 2L;
     private final String userName;
     private final ConcurrentHashMap<Integer, Chat> chats;
-    private SocketChannelHandler socketChannelHandler;
+    private SelectionKey selectionKey;
 
     public UserData(String userName) {
         
@@ -22,14 +21,14 @@ public class UserData implements Serializable, Comparable {
         this.chats = new ConcurrentHashMap();
     }
 
-    public SocketChannelHandler getSocketChannelHandler() {
+    public SelectionKey getSelectionKey() {
         
-        return socketChannelHandler;
+        return this.selectionKey;
     }
 
-    public void setSocketChannelHandler(SocketChannelHandler socketChannelHandler) {
+    public void setSelectionKey(SelectionKey selectionKey) {
         
-        this.socketChannelHandler = socketChannelHandler;
+        this.selectionKey = selectionKey;
     }
 
     public String getUserName() {
