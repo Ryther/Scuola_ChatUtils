@@ -2,11 +2,12 @@ package chatUtils.net;
 
 
 import chatUtils.data.ChatMessage;
+import chatUtils.data.ObjectObserved;
+import chatUtils.data.ObjectObserver;
 import chatUtils.data.UserData;
-import java.nio.channels.SocketChannel;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import utils.net.SocketChannelHandler;
 
 /**
@@ -26,9 +27,9 @@ public class Talker implements Runnable {
         READER, WRITER
     }
     
-    
     private final UserData userData; // Mappa per la  gestione degli oggetti da inviare.
-    private final Map<TalkerType, Object> dataMap; // Mappa per la  gestione degli oggetti da inviare.
+    private final ObjectObserved objectObserved; // Oggetto osservabile per verificare cambiamenti in lettura.
+    private final ObjectObserver objectObserver; // Oggetto osservabile per verificare cambiamenti in scrittura.
     private final SocketChannelHandler socketChannelHandler; // Handler per la gestione degli stream.
     private final TalkerType talkerType; // Enumeratorre di ripo.
     
@@ -38,20 +39,38 @@ public class Talker implements Runnable {
     * 
     * @param userData L'<tt>UserData</tt> contenente le informazioni
     * dell'utente.
-    * @param dataMap Una <tt>ConcurentHashMap<TalkerType, Object></tt> 
-    * contenente due valori, entrambi con chiave di tipo <tt>TalkerType</tt>
-    * e valori di tipo <tt>Object</tt>.
+     * @param objectObserver L'oggetto osservato per rilevare i cambiamenti
+    * in scrittura.
     * @param socketChannelHandler Il <tt>SocketChannelHandler</tt> di
     * connessione al server.
-    * @param talkerType La tipologia di <tt>Runnable</tt> che si vuole creare,
-    * con stati selezionabili tra: {@link TalkerType}.
     */
-    public Talker(UserData userData, Map<TalkerType, Object> dataMap,SocketChannelHandler socketChannelHandlerù, TalkerType talkerType) {
+    public Talker(UserData userData, SocketChannelHandler socketChannelHandler, ObjectObserver objectObserver) {
         
         this.userData = userData;
-        this.dataMap = new ConcurrentHashMap();
-        this.socketChannelHandler = socketChannelHandlerù;
-        this.talkerType = talkerType;
+        this.objectObserver = objectObserver;
+        this.objectObserved = null;
+        this.socketChannelHandler = socketChannelHandler;
+        this.talkerType = TalkerType.WRITER;
+    }
+    
+    /**
+    * Costruttore: inizializza Talker, usando un channel per inviare
+    * e ricevere oggetti.
+    * 
+    * @param userData L'<tt>UserData</tt> contenente le informazioni
+    * dell'utente.
+     * @param objectObserved L'oggetto da osservare per rilevare i cambiamenti
+    * in lettura.
+    * @param socketChannelHandler Il <tt>SocketChannelHandler</tt> di
+    * connessione al server.
+    */
+    public Talker(UserData userData, SocketChannelHandler socketChannelHandler, ObjectObserved objectObserved) {
+        
+        this.userData = userData;
+        this.objectObserved = objectObserved;
+        this.objectObserver = null;
+        this.socketChannelHandler = socketChannelHandler;
+        this.talkerType = TalkerType.READER;
     }
     
     /**
@@ -79,13 +98,21 @@ public class Talker implements Runnable {
      */
     private void writer(){
         
-        Scanner scanner = new Scanner(System.in);
-        String message;
-        ChatMessage chatMessage = new ChatMessage(userData.getUserName());
+        ChatMessage chatMessage = new ChatMessage(this.userData.getUserName());
         chatMessage.setChatName("t");
-        while(!((message = scanner.nextLine()).equals("stop"))) {
+        while(true) {
             
-            chatMessage.setMessage(message);
+            while (!this.objectObserver.isUpdated()) {
+                synchronized (this.objectObserver.getObjectObserved()) {
+                    try {
+                        this.objectObserved.wait();
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Talker.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+            
+            chatMessage.setMessage((String) this.objectObserver.getObjectObserved());
             chatMessage.setDateTime();
             socketChannelHandler.pushToChannel(chatMessage);
         }
