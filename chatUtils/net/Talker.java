@@ -4,8 +4,6 @@ package chatUtils.net;
 import chatUtils.data.ChatMessage;
 import chatUtils.data.ObjectObserved;
 import chatUtils.data.ObjectObserver;
-import chatUtils.data.UserData;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.net.SocketChannelHandler;
@@ -27,7 +25,6 @@ public class Talker implements Runnable {
         READER, WRITER
     }
     
-    private final UserData userData; // Mappa per la  gestione degli oggetti da inviare.
     private final ObjectObserved objectObserved; // Oggetto osservabile per verificare cambiamenti in lettura.
     private final ObjectObserver objectObserver; // Oggetto osservabile per verificare cambiamenti in scrittura.
     private final SocketChannelHandler socketChannelHandler; // Handler per la gestione degli stream.
@@ -37,16 +34,13 @@ public class Talker implements Runnable {
     * Costruttore: inizializza Talker, usando un channel per inviare
     * e ricevere oggetti.
     * 
-    * @param userData L'<tt>UserData</tt> contenente le informazioni
-    * dell'utente.
-     * @param objectObserver L'oggetto osservato per rilevare i cambiamenti
-    * in scrittura.
     * @param socketChannelHandler Il <tt>SocketChannelHandler</tt> di
     * connessione al server.
+    * @param objectObserver L'oggetto osservato per rilevare i cambiamenti
+    * in scrittura.
     */
-    public Talker(UserData userData, SocketChannelHandler socketChannelHandler, ObjectObserver objectObserver) {
+    public Talker(SocketChannelHandler socketChannelHandler, ObjectObserver objectObserver) {
         
-        this.userData = userData;
         this.objectObserver = objectObserver;
         this.objectObserved = null;
         this.socketChannelHandler = socketChannelHandler;
@@ -57,16 +51,13 @@ public class Talker implements Runnable {
     * Costruttore: inizializza Talker, usando un channel per inviare
     * e ricevere oggetti.
     * 
-    * @param userData L'<tt>UserData</tt> contenente le informazioni
-    * dell'utente.
-     * @param objectObserved L'oggetto da osservare per rilevare i cambiamenti
-    * in lettura.
     * @param socketChannelHandler Il <tt>SocketChannelHandler</tt> di
     * connessione al server.
+    * @param objectObserved L'oggetto da osservare per rilevare i cambiamenti
+    * in lettura.
     */
-    public Talker(UserData userData, SocketChannelHandler socketChannelHandler, ObjectObserved objectObserved) {
+    public Talker(SocketChannelHandler socketChannelHandler, ObjectObserved objectObserved) {
         
-        this.userData = userData;
         this.objectObserved = objectObserved;
         this.objectObserver = null;
         this.socketChannelHandler = socketChannelHandler;
@@ -93,13 +84,12 @@ public class Talker implements Runnable {
     /**
      * Talker.writer: metodo privato utilizzato per l'avvio del polling in
      * scrittura, utilizzando il <tt>SocketChannel</tt> ed inviando 
-     * l'<tt>Object</tt> impostato come valore della dataMap 
-     * all chiave <tt>TalkerType.WRITER</tt>.
+     * l'<tt>Object</tt> riportato dall'update effettuato da
+     * <tt>ObjectObserver</tt>.
      */
     private void writer(){
         
-        ChatMessage chatMessage = new ChatMessage(this.userData.getUserName());
-        chatMessage.setChatName("t");
+        ChatMessage sentMessage = null;
         while(true) {
             
             while (!this.objectObserver.isUpdated()) {
@@ -112,9 +102,8 @@ public class Talker implements Runnable {
                 }
             }
             
-            chatMessage.setMessage((String) this.objectObserver.getObjectObserved());
-            chatMessage.setDateTime();
-            socketChannelHandler.pushToChannel(chatMessage);
+            sentMessage = (ChatMessage) this.objectObserver.getObjectObserved();
+            socketChannelHandler.pushToChannel(sentMessage);
         }
     }
     
@@ -126,10 +115,10 @@ public class Talker implements Runnable {
      */
     private void reader() {
         
-        ChatMessage incomingMessage;
-        while(!((incomingMessage = (ChatMessage)socketChannelHandler.pullFromChannel()).getMessage().equals("stop"))) {
-            
-            System.out.println(incomingMessage);
+        ChatMessage incomingMessage = null;
+        while(true) {
+            incomingMessage = (ChatMessage)socketChannelHandler.pullFromChannel();
+            this.objectObserved.setObjectObserved(incomingMessage);
         }
     }
 }
